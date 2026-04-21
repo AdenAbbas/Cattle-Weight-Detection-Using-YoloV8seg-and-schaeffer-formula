@@ -1,0 +1,1 @@
+# Cattle-Weight-Detection-Using-YoloV8seg-and-schaeffer-formula
