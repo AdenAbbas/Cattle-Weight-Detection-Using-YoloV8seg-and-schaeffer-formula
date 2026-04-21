@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐄 Cowville — AI Cattle Weight Scale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Sky with clouds -->
+    <div class="sky">
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+        <div class="cloud c3"></div>
+        <div class="sun">☀️</div>
+    </div>
+
+    <!-- Main game canvas -->
+    <div class="farm">
+        <header class="sign-post">
+            <h1>🐄 COWVILLE 🐄</h1>
+            <p class="tagline">~ The Magical AI Cattle Scale ~</p>
+        </header>
+
+        <!-- Upload panel -->
+        <div class="panel upload-panel">
+            <h2>📷 Upload Your Cow</h2>
+
+            <!-- Guide + drop zone (shown when no image selected) -->
+            <div id="dropzone" class="barn-door">
+                <div class="guide-content">
+                    <!-- Viewfinder frame with cow outline -->
+                    <div class="viewfinder">
+                        <span class="vf-corner vf-tl"></span>
+                        <span class="vf-corner vf-tr"></span>
+                        <span class="vf-corner vf-bl"></span>
+                        <span class="vf-corner vf-br"></span>
+
+                        <svg class="cow-guide-svg" viewBox="0 0 420 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Body -->
+                            <ellipse cx="238" cy="128" rx="136" ry="58" stroke="currentColor" stroke-width="2.5" stroke-dasharray="9 4"/>
+                            <!-- Neck -->
+                            <path d="M110 108 Q94 80 103 60" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                            <!-- Head -->
+                            <ellipse cx="89" cy="47" rx="25" ry="19" stroke="currentColor" stroke-width="2.5"/>
+                            <!-- Snout -->
+                            <ellipse cx="66" cy="57" rx="12" ry="8" stroke="currentColor" stroke-width="2"/>
+                            <!-- Nostrils -->
+                            <circle cx="61" cy="57" r="2.5" fill="currentColor"/>
+                            <circle cx="71" cy="57" r="2.5" fill="currentColor"/>
+                            <!-- Eye -->
+                            <circle cx="80" cy="41" r="4" fill="currentColor"/>
+                            <!-- Ear -->
+                            <ellipse cx="106" cy="30" rx="10" ry="6" stroke="currentColor" stroke-width="2" transform="rotate(-18 106 30)"/>
+                            <!-- Withers line -->
+                            <path d="M108 100 Q142 78 172 85" stroke="currentColor" stroke-width="2" stroke-dasharray="5 3" opacity="0.6"/>
+                            <!-- Front legs -->
+                            <line x1="150" y1="184" x2="142" y2="215" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="174" y1="185" x2="168" y2="216" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            <!-- Back legs -->
+                            <line x1="312" y1="184" x2="305" y2="215" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="336" y1="183" x2="331" y2="214" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            <!-- Tail -->
+                            <path d="M370 106 Q397 90 400 107 Q402 121 390 126" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                            <!-- Udder -->
+                            <path d="M228 184 Q238 197 248 184" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+
+                        <div class="vf-labels">
+                            <span>◄ HEAD</span>
+                            <span>TAIL ►</span>
+                        </div>
+                    </div>
+
+                    <p class="guide-tip">
+                        Click or drag to upload a photo<br>
+                        <span class="small">Side-profile · full body visible · good lighting</span>
+                    </p>
+                </div>
+                <input type="file" id="fileInput" accept="image/*" hidden>
+            </div>
+
+            <!-- Preview (shown after image selected) -->
+            <div id="preview" class="preview hidden">
+                <img id="previewImg" src="" alt="Your cow">
+                <button class="btn-small" id="clearBtn">✕ Remove</button>
+            </div>
+
+            <button id="weighBtn" class="btn-big" disabled>
+                ⚖️ Weigh My Cow!
+            </button>
+        </div>
+
+        <!-- Result display -->
+        <div id="result" class="result-scroll hidden">
+            <div class="scale-container">
+                <div class="scale">
+                    <div class="scale-needle" id="needle"></div>
+                    <div class="scale-face">
+                        <div class="weight-number">
+                            <span id="weightValue">0</span>
+                            <span class="weight-unit">kg</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="verdict-box">
+                <p id="verdictText">Weighing...</p>
+            </div>
+            <button class="btn-small" id="againBtn">🔄 Weigh Another</button>
+        </div>
+
+        <!-- Loading state -->
+        <div id="loading" class="loading hidden">
+            <div class="cow-running">🐄</div>
+            <p>Running through the farm...</p>
+        </div>
+
+        <!-- Error message -->
+        <div id="error" class="error-msg hidden">
+            <p id="errorText"></p>
+        </div>
+
+        <!-- Fence and grass -->
+        <div class="fence"></div>
+        <div class="grass"></div>
+
+        <!-- Decorative farm animals -->
+        <div class="farm-decoration">
+            <span class="animal a1">🐔</span>
+            <span class="animal a2">🐓</span>
+            <span class="animal a3">🐑</span>
+            <span class="animal a4">🐖</span>
+            <span class="animal a5">🌾</span>
+            <span class="animal a6">🌻</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="info-footer">
+        <p>🎓 FYP Project — YOLOv8n-seg + Ridge Regression | <a href="#" id="aboutLink">How It Works</a></p>
+    </footer>
+
+    <!-- About modal -->
+    <div id="aboutModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>🤖 How It Works</h2>
+            <p>Upload a <strong>side-profile photo</strong> of your cow. The AI will:</p>
+            <p>① Segment the cattle silhouette using <strong>YOLOv8n-seg</strong><br>
+               ② Extract body measurements from the mask (length, girth, proportions)<br>
+               ③ Apply the <strong>Schaeffer formula</strong> as a biomechanical prior<br>
+               ④ Refine the estimate with a trained <strong>Ridge regression</strong> model</p>
+            <p><strong>Accuracy:</strong> R²=0.41, MAE ≈ 24.8 kg on the BMGF cattle dataset.</p>
+            <p class="small">No depth sensor or scale required — just a standard photo.</p>
+            <button class="btn-small" id="closeModal">Got it!</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
